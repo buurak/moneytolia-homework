@@ -12,5 +12,5 @@ class User(db.Model):
         return self.username
 
 class Dashboard(db.Model):
-    wordlist = db.Column(db.String)
+    wordlist = db.Column(db.ARRAY())
     user_id = db.Column(db.Integer,db.ForeingKey('user.id'))
