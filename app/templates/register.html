@@ -1,0 +1,23 @@
+{% extends "layout.html" %}     
+
+{% block content %}
+    {% if session['logged_in'] %}
+    <div class="alert alert-danger" role="alert">
+        Zaten Bir Kaydınız Bulunmaktadır...
+    </div>
+
+    {% else %}
+        {% from "includes/formhelpers.html" import render_field %}
+        {{ form.csrf_token }}
+            <form method='POST'>
+            <dl>
+                {{ render_field(form.username) }}
+                {{ render_field(form.password) }}
+            </dl>
+                <button class="search-button" type="submit">Register</button>
+            </form>
+    {% endif %}
+{% endblock content %}
+ 
+
+    

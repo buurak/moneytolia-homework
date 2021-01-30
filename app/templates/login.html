@@ -1,0 +1,16 @@
+{% extends "layout.html" %}    
+
+{% block content %}
+    {% if session['logged_in'] %}
+        <p>You're logged in already!</p>
+        
+    {% else %}
+        <h2>Login</h2>
+        <form method="POST">
+            {{ form.username(placeholder="Username", type="text") }}
+            {{ form.password(placeholder="Password", type="password") }}
+            <button class="search-button" type="submit">Login</button>
+        </form>
+    {% endif %}
+{% endblock content %}
+    
