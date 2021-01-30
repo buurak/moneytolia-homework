@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+    <form method="POST" action="{{ url_for('words.search_words') }}">
+        <div class="search-box">
+            {{ form.search(placeholder="Search", type="text") }}
+            <button class="search-button" type="submit">Search</button>
+        </div>
+    </form>
+    
+    {% if meanings %}
+        <h1>{{ word }}</h1>
+            <ul>
+            {% for meaning in meanings %}
+                <li>{{ meaning }}</li>
+            {% endfor %}
+            </ul>
+    {% endif %}
+
+</body>
+</html>
