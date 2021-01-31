@@ -21,3 +21,5 @@ from .words.routes import words
 app.register_blueprint(user)
 app.register_blueprint(dashboard)
 app.register_blueprint(words)
+
+db.create_all()

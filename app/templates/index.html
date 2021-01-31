@@ -2,7 +2,7 @@
 
 {% block content %}
 
-    <form method="POST" action="{{ url_for('words.search_words') }}">
+    <form method="POST" action="{{ url_for('words.search_word') }}">
         <div class="search-box">
             {{ form.search(placeholder="Search", type="text") }}
             <button class="search-button" type="submit">Search</button>
@@ -10,7 +10,10 @@
     </form>
     
     {% if meanings %}
-        <h1>{{ word }}</h1>
+        <h1>{{ word }}</h1>   
+        <form action="{{ url_for('words.save_word') }}" method='POST'>
+            <button class="search-button" type="submit">Save this word!</button>
+        </form>
             <ul>
             {% for meaning in meanings %}
                 <li>{{ meaning }}</li>
