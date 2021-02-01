@@ -1,15 +1,16 @@
 from app import db
-from sqlalchemy.dialects.postgresql import ARRAY, JSON
-from app.user.models import User
+from sqlalchemy.dialects.postgresql import JSON
 
 
 class Dashboard(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(
+        db.Integer, db.ForeignKey("user.id"), unique=True, primary_key=True
+    )
     points = db.Column(db.Integer)
     wordlist = db.Column(JSON)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
-    def __init__(self, points, wordlist):
+    def __init__(self, user_id, points, wordlist):
+        self.user_id = user_id
         self.points = points
         self.wordlist = wordlist
 

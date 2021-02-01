@@ -13,9 +13,10 @@ def login():
     if request.method == 'POST' and form.validate:
         username = request.form['username']
         password = request.form['password']
-        data = User.query.filter_by(username = username).first()
-        if data is not None and check_password_hash(data.password, password):
+        user = User.query.filter_by(username = username).first()
+        if user is not None and check_password_hash(user.password, password):
             session['logged_in'] = True
+            session['user_id'] = user.id
             return redirect(url_for("words.search_word"))
         else:
             flash('Username or Password Incorrect', "Danger")
@@ -42,4 +43,4 @@ def register():
 @user.route('/logout/')
 def logout():
     session['logged_in'] = False
-    return redirect(url_for('user.login'))
+    return redirect(url_for('user.register'))
