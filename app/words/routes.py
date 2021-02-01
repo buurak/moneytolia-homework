@@ -40,10 +40,8 @@ def search_word():
                             j['searched']+=1
                             flag_modified(dashboard, "wordlist")
                             db.session.commit()
-                            return redirect(url_for("words.search_word"))
-        return render_template(
-            "index.html", meanings=meanings, form=form, word=searchedWord
-        )
+                            return render_template("index.html", meanings=meanings, form=form, word=searchedWord)
+        return render_template("index.html", meanings=meanings, form=form, word=searchedWord)
 
     return render_template("index.html", form=form)
 
