@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, redirect, url_for, session
-from .models import Dashboard
+from app.models.models import Dashboard
 from app import db
 import json
 

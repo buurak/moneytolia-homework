@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, url_for, redirect, session, flash
 from .forms import SearchForm
-from app.dashboard.models import Dashboard
+from app.models.models import Dashboard
 from sqlalchemy.orm.attributes import flag_modified
 from app import db
 import requests
@@ -20,6 +20,7 @@ headers = {
 def search_word():
     form = SearchForm()
     if request.method == "POST":
+        dashboard = Dashboard.query.filter_by(user_id=session["user_id"]).first()
         form = SearchForm()
         searchedWord = form.search.data
         url = BASE_URL + searchedWord + "/definitions"
@@ -30,6 +31,16 @@ def search_word():
             meanings.append(meaning["definition"])
         session["word"] = searchedWord
         session["data"] = result
+        if dashboard:
+            #Adds 1 point to search tracker value, 
+            for i in dashboard.wordlist['words']:
+                if i['word']==result['word']:
+                    for j in dashboard.wordlist['words']:
+                        if j['word']==i['word']:
+                            j['searched']+=1
+                            flag_modified(dashboard, "wordlist")
+                            db.session.commit()
+                            return redirect(url_for("words.search_word"))
         return render_template(
             "index.html", meanings=meanings, form=form, word=searchedWord
         )
@@ -43,44 +54,41 @@ def save_word():
         dashboard = Dashboard.query.filter_by(user_id=session["user_id"]).first()
         data = session["data"]
         word = data["word"]
-        meanings = []
-        for meaning in data["definitions"]:
-            meanings.append(meaning["definition"])
+        meaning = data["definitions"][0]["definition"]
 
         if dashboard:
-            for i in dashboard.wordlist['words']:
-                print(i['word'], data['word'])
-                if i['word'] == data['word']:
-                    print("if e girdi")
-                    flash('This word is already saved!')
-                    return redirect(url_for('words.search_word'))
-                
-            print("else durumu")
+            for i in dashboard.wordlist["words"]:
+                if i["word"] == data["word"]:
+                    flash("This word is already saved!")
+                    return redirect(url_for("words.search_word"))
+
             word_details = {
-                "word": word, 
-                "definitions": meanings, 
-                "point": 4
-                }
+                "word": word,
+                "definition": meaning,
+                "power": 10,
+                "searched": 0,
+                "asked": 0
+            }
 
             w = dashboard.wordlist["words"]
             w.append(word_details)
-            dashboard.wordlist['words'] = w
-            flag_modified(dashboard, 'wordlist')
+            dashboard.wordlist["words"] = w
+            flag_modified(dashboard, "wordlist")
             db.session.commit()
             return redirect(url_for("words.search_word"))
 
         else:
-            print("dashboard yok")
-            word_details = [{
-                "word": word, 
-                "definitions": meanings, 
-                "point": 4
-            }]
-
+            word_details = [
+                {
+                    "word": word,
+                    "definition": meaning,
+                    "power": 10,
+                    "searched": 0,
+                    "asked": 0
+                }
+            ]
             word_info = {"words": word_details}
-            newDashboard = Dashboard(
-                user_id=session["user_id"], wordlist=word_info
-            )
+            newDashboard = Dashboard(user_id=session["user_id"], wordlist=word_info)
             db.session.add(newDashboard)
             db.session.commit()
             return redirect(url_for("words.search_word"))

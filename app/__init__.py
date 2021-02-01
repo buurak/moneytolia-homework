@@ -11,8 +11,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 
-from .user.models import User
-from .dashboard.models import Dashboard
+from app.models.models import User, Dashboard
 
 from .user.routes import user
 from .dashboard.routes import dashboard
