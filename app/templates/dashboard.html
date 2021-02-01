@@ -3,5 +3,14 @@
 {% block content %}
 
 <h1>Dashboard</h1>
+    {% if my_words %}
+    <ol>
+        {% for word in my_words %}
+            <li>
+                {{ word }}            
+            </li>
+        {% endfor %}
+    </ol>
 
+    {% endif %}
 {% endblock content %}

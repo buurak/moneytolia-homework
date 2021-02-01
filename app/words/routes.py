@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, url_for, redirect, session
+from flask import Blueprint, render_template, request, url_for, redirect, session, flash
 from .forms import SearchForm
 from app.dashboard.models import Dashboard
 from sqlalchemy.orm.attributes import flag_modified
@@ -40,15 +40,22 @@ def search_word():
 @words.route("/save", methods=["GET", "POST"])
 def save_word():
     if request.method == "POST":
+        dashboard = Dashboard.query.filter_by(user_id=session["user_id"]).first()
         data = session["data"]
         word = data["word"]
         meanings = []
         for meaning in data["definitions"]:
             meanings.append(meaning["definition"])
 
-        dashboard = Dashboard.query.filter_by(user_id=session["user_id"]).first()
-
         if dashboard:
+            for i in dashboard.wordlist['words']:
+                print(i['word'], data['word'])
+                if i['word'] == data['word']:
+                    print("if e girdi")
+                    flash('This word is already saved!')
+                    return redirect(url_for('words.search_word'))
+                
+            print("else durumu")
             word_details = {
                 "word": word, 
                 "definitions": meanings, 
@@ -63,6 +70,7 @@ def save_word():
             return redirect(url_for("words.search_word"))
 
         else:
+            print("dashboard yok")
             word_details = [{
                 "word": word, 
                 "definitions": meanings, 
@@ -71,7 +79,7 @@ def save_word():
 
             word_info = {"words": word_details}
             newDashboard = Dashboard(
-                user_id=session["user_id"], points=0, wordlist=word_info
+                user_id=session["user_id"], wordlist=word_info
             )
             db.session.add(newDashboard)
             db.session.commit()

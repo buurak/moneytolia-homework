@@ -6,12 +6,11 @@ class Dashboard(db.Model):
     user_id = db.Column(
         db.Integer, db.ForeignKey("user.id"), unique=True, primary_key=True
     )
-    points = db.Column(db.Integer)
+    points = db.Column(db.Integer,default=0)
     wordlist = db.Column(JSON)
 
-    def __init__(self, user_id, points, wordlist):
+    def __init__(self, user_id, wordlist):
         self.user_id = user_id
-        self.points = points
         self.wordlist = wordlist
 
     def __repr__(self):
