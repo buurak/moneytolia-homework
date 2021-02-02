@@ -1,13 +1,11 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
-
 app = Flask(__name__)
 
 app.config['SECRET_KEY'] = 'flaskloverburak'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////home/brk/Desktop/moneytolia-homework/words.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
 
 db = SQLAlchemy(app)
 

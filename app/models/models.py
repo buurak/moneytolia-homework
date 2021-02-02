@@ -6,8 +6,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(120), nullable=False)
-    dashboard = db.relationship("Dashboard", backref="user", uselist=False)
-    
+    dashboard = db.relationship("Dashboard", uselist=False, backref='user')
     def __init__(self, username, password):
         self.username = username
         self.password = password
@@ -17,7 +16,7 @@ class User(db.Model):
 
 class Dashboard(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user_id = db.Column(db.ForeignKey('user.id'))
     points = db.Column(db.Integer,default=0)
     wordlist = db.Column(JSON)
 

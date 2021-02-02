@@ -65,7 +65,8 @@ def save_word():
                 "definition": meaning,
                 "power": 10,
                 "searched": 0,
-                "asked": 0
+                "asked": 0,
+                "is_asked":False
             }
 
             w = dashboard.wordlist["words"]
@@ -82,7 +83,8 @@ def save_word():
                     "definition": meaning,
                     "power": 10,
                     "searched": 0,
-                    "asked": 0
+                    "asked": 0,
+                    "is_asked":False
                 }
             ]
             word_info = {"words": word_details}
