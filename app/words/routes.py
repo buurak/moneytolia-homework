@@ -17,7 +17,6 @@ headers = {
 }
 
 
-
 @words.route("/search", methods=["GET", "POST"])
 def search_word():
     form = SearchForm()
@@ -39,19 +38,25 @@ def search_word():
             meanings.append(meaning["definition"])
 
         session["search_data"] = def_result
-        session["frequency_data"] = fq_result['frequency']['perMillion']
+        session["frequency_data"] = fq_result["frequency"]["perMillion"]
+        
         if dashboard:
-            #Adds 1 point to search tracker value, 
-            for i in dashboard.wordlist['words']:
-                if i['word']==def_result['word']:
-                    for j in dashboard.wordlist['words']:
-                        if j['word']==i['word']:
-                            j['searched']+=1
+            # Adds 1 point to search tracker value,
+            for i in dashboard.wordlist["words"]:
+                if i["word"] == def_result["word"]:
+                    for j in dashboard.wordlist["words"]:
+                        if j["word"] == i["word"]:
+                            j["searched"] += 1
                             flag_modified(dashboard, "wordlist")
                             db.session.commit()
-                            return render_template("index.html", meanings=meanings, form=form, word=searchedWord)
+                            return render_template(
+                                "index.html",
+                                meanings=meanings,
+                                form=form,
+                                word=searchedWord
+                            )
         return render_template("index.html", meanings=meanings, form=form, word=searchedWord)
-
+    
     return render_template("index.html", form=form)
 
 
@@ -62,9 +67,7 @@ def save_word():
         data = session["search_data"]
         word = data["word"]
         meaning = data["definitions"][0]["definition"]
-
-        permillion = session['frequency_data']
-
+        permillion = session["frequency_data"]
         if dashboard:
             for i in dashboard.wordlist["words"]:
                 if i["word"] == data["word"]:
@@ -77,7 +80,7 @@ def save_word():
                 "power": 10,
                 "searched": 0,
                 "asked": 0,
-                "permillion":permillion
+                "permillion": permillion,
             }
 
             w = dashboard.wordlist["words"]
@@ -85,7 +88,7 @@ def save_word():
             dashboard.wordlist["words"] = w
             flag_modified(dashboard, "wordlist")
             db.session.commit()
-            formula(session['user_id'],word)
+            formula(session["user_id"], word)
             return redirect(url_for("words.search_word"))
 
         else:
@@ -96,75 +99,76 @@ def save_word():
                     "power": 10,
                     "searched": 0,
                     "asked": 0,
-                    "permillion":permillion
+                    "permillion": permillion,
                 }
             ]
             word_info = {"words": word_details}
             newDashboard = Dashboard(user_id=session["user_id"], wordlist=word_info)
             db.session.add(newDashboard)
             db.session.commit()
-            formula(session['user_id'],word)
+            formula(session["user_id"], word)
             return redirect(url_for("words.search_word"))
 
-def formula(user_id,word):
+
+def formula(user_id, word):
     dashboard = Dashboard.query.filter_by(user_id=user_id).first()
     points = dashboard.points
-    for i in dashboard.wordlist['words']:
-        if i['word']==word:
-            permillion = i['permillion']
-            searched = i['searched']
-            asked = i['asked']
+    for i in dashboard.wordlist["words"]:
+        if i["word"] == word:
+            permillion = i["permillion"]
+            searched = i["searched"]
+            asked = i["asked"]
 
-    power_index_i = 0.27*10000//permillion
-    power_index_f = 0.27*10000/permillion
-    
-    if permillion <1:
-        power=100
-    elif 100 > permillion >=1:
-        power =85
-    elif 500 > permillion >=100:
+    power_index_i = 0.27 * 10000 // permillion
+    power_index_f = 0.27 * 10000 / permillion
+
+    if permillion < 1:
+        power = 100
+    elif 100 > permillion >= 1:
+        power = 85
+    elif 500 > permillion >= 100:
         power = 60
-    elif 1000 > permillion >=500:
+    elif 1000 > permillion >= 500:
         power = 50
-    elif 5000 > permillion >=1000:
+    elif 5000 > permillion >= 1000:
         power = 40
-    elif 10000 > permillion >=5000:
+    elif 10000 > permillion >= 5000:
         power = 30
     else:
         power = 15
 
-    #Points
+    # Points
     if points == 0:
         pass
-    elif 20>=points>0:
-        power-=3
-    elif 50>=points>20:
-        power-=6
-    elif points>50:
-        power-=12
+    elif 20 >= points > 0:
+        power -= 3
+    elif 50 >= points > 20:
+        power -= 6
+    elif points > 50:
+        power -= 12
 
-    #Searched
+    # Searched
     if searched == 0:
         pass
-    elif 5>=searched>0:
-        power-=3
-    elif searched>5:
-        power-=8
+    elif 5 >= searched > 0:
+        power -= 3
+    elif searched > 5:
+        power -= 8
 
-    #Asked
+    # Asked
     if asked == 0:
         pass
-    elif 3>=asked>0:
-        power-=3
-    elif asked>3:
-        power-=6
+    elif 3 >= asked > 0:
+        power -= 3
+    elif asked > 3:
+        power -= 6
 
-    #To avoid the power attribute to go sub zero
-    if power<0:
-        power == 0
-    
-    for i in dashboard.wordlist['words']:
-        if i['word']==word:
-            i['power']=power
+    # To avoid the power attribute to go sub zero
+    if power < 0:
+        power = 0
+
+    for i in dashboard.wordlist["words"]:
+        if i["word"] == word:
+            i["power"] = power
             flag_modified(dashboard, "wordlist")
             db.session.commit()

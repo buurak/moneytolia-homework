@@ -11,9 +11,13 @@
             </li>
         {% endfor %}
     </ol>
+    {% endif %}
+
+    {% if count>=10 %}
     <form action="/dashboard/quiz" method='GET'>
         <button>Start Quiz!</button>
     </form>
+
     {% elif start %}
         Quiz Has Started! <br>
         Definition: {{ correct_definition }}
