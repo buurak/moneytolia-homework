@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, session, request, flash
 from sqlalchemy.orm.attributes import flag_modified
 from app.models.models import Dashboard
+from app.words.routes import formula
 from app import db
 import json
 import random
@@ -13,7 +14,14 @@ def user_dashboard():
     my_dashboard = Dashboard.query.filter(Dashboard.user_id==session['user_id']).first()
     my_words = []
     for word in my_dashboard.wordlist['words']:
-        my_words.append(word['word'])
+        info = {
+        "word":word['word'],
+        "power":word['power']
+        }
+        my_words.append(info)
+
+    for word in my_words:
+        formula(session['user_id'], word['word'])
         
     if len(my_words)>10:
         print("10dan büyük")
