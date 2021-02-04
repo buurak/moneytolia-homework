@@ -3,6 +3,7 @@ from .forms import SearchForm
 from app.models.models import Dashboard
 from sqlalchemy.orm.attributes import flag_modified
 from app import db
+from app.config import RAPID_API_HOST, RAPID_API_KEY
 import requests
 import json
 
@@ -12,8 +13,8 @@ words = Blueprint("words", __name__)
 BASE_URL = "https://wordsapiv1.p.rapidapi.com/words/"
 
 headers = {
-    "x-rapidapi-key": "821b950c45msh91f67e1bf3b5100p198b0djsnfe5b8481ac28",
-    "x-rapidapi-host": "wordsapiv1.p.rapidapi.com",
+    "x-rapidapi-key": RAPID_API_KEY,
+    "x-rapidapi-host": RAPID_API_HOST,
 }
 
 
@@ -34,8 +35,12 @@ def search_word():
         fq_result = fq_r.json()
 
         meanings = []
-        for meaning in def_result["definitions"]:
-            meanings.append(meaning["definition"])
+        try:
+            for meaning in def_result["definitions"]:
+                meanings.append(meaning["definition"])
+        except:
+            flash('This word is does not exist')
+            return render_template('index.html', form=form)
 
         session["search_data"] = def_result
         session["frequency_data"] = fq_result["frequency"]["perMillion"]
