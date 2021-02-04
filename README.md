@@ -10,6 +10,7 @@ python3 run.py
 ```
 
 **dotenv .env içeriği**
+
 cd /moneytolia-homework/app
 
 ```
