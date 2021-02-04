@@ -44,19 +44,12 @@ def search_word():
             # Adds 1 point to search tracker value,
             for i in dashboard.wordlist["words"]:
                 if i["word"] == def_result["word"]:
-                    for j in dashboard.wordlist["words"]:
-                        if j["word"] == i["word"]:
-                            j["searched"] += 1
-                            flag_modified(dashboard, "wordlist")
-                            db.session.commit()
-                            return render_template(
-                                "index.html",
-                                meanings=meanings,
-                                form=form,
-                                word=searchedWord
-                            )
-        return render_template("index.html", meanings=meanings, form=form, word=searchedWord)
-    
+                    i["searched"] += 1
+                    flag_modified(dashboard, "wordlist")
+                    db.session.commit()
+                    return render_template("index.html",meanings=meanings,form=form,word=searchedWord)
+        
+        return render_template("index.html", meanings=meanings, form=form, word=searchedWord) 
     return render_template("index.html", form=form)
 
 
@@ -77,10 +70,11 @@ def save_word():
             word_details = {
                 "word": word,
                 "definition": meaning,
-                "power": 10,
+                "power": 0,
+                "points":0,
                 "searched": 0,
                 "asked": 0,
-                "permillion": permillion,
+                "permillion": permillion
             }
 
             w = dashboard.wordlist["words"]
@@ -96,10 +90,11 @@ def save_word():
                 {
                     "word": word,
                     "definition": meaning,
-                    "power": 10,
+                    "power": 0,
+                    "points":0,
                     "searched": 0,
                     "asked": 0,
-                    "permillion": permillion,
+                    "permillion": permillion
                 }
             ]
             word_info = {"words": word_details}
@@ -112,12 +107,13 @@ def save_word():
 
 def formula(user_id, word):
     dashboard = Dashboard.query.filter_by(user_id=user_id).first()
-    points = dashboard.points
     for i in dashboard.wordlist["words"]:
         if i["word"] == word:
+            points = i["points"]
             permillion = i["permillion"]
             searched = i["searched"]
             asked = i["asked"]
+
 
     power_index_i = 0.27 * 10000 // permillion
     power_index_f = 0.27 * 10000 / permillion
@@ -138,8 +134,10 @@ def formula(user_id, word):
         power = 15
 
     # Points
-    if points == 0:
-        pass
+    if -20 <= points <= -10:
+        power += 6
+    if -10 < points <= 0:
+        power += 3
     elif 20 >= points > 0:
         power -= 3
     elif 50 >= points > 20:

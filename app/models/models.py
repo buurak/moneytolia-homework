@@ -17,7 +17,6 @@ class User(db.Model):
 class Dashboard(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.ForeignKey('user.id'))
-    points = db.Column(db.Integer,default=0)
     wordlist = db.Column(JSON)
 
     def __init__(self, user_id, wordlist):
