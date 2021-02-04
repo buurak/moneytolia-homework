@@ -6,6 +6,7 @@ from app import db
 from app.config import RAPID_API_HOST, RAPID_API_KEY
 import requests
 import json
+from app.loginreq import login_required
 
 words = Blueprint("words", __name__)
 
@@ -18,7 +19,8 @@ headers = {
 }
 
 
-@words.route("/search", methods=["GET", "POST"])
+@words.route("/", methods=["GET", "POST"])
+@login_required
 def search_word():
     form = SearchForm()
     if request.method == "POST":

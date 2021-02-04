@@ -41,6 +41,7 @@ def register():
         return render_template("register.html", form=form)
 
 @user.route('/logout/')
+@login_required
 def logout():
     session['logged_in'] = False
-    return redirect(url_for('user.register'))
+    return redirect(url_for('user.login'))
