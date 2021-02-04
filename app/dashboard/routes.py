@@ -12,15 +12,17 @@ dashboard = Blueprint("dashboard", __name__, url_prefix="/dashboard")
 @dashboard.route("/", methods=["GET"])
 def user_dashboard():
     my_dashboard = Dashboard.query.filter(Dashboard.user_id == session["user_id"]).first()
-    my_words = []
-    for word in my_dashboard.wordlist["words"]:
-        info = {"word": word["word"], "power": word["power"]}
-        my_words.append(info)
-    for word in my_words:
-        formula(session["user_id"], word["word"])
-    count = len(my_words)
-    return render_template("dashboard.html", my_words=my_words, count=count)
-
+    count=0
+    if my_dashboard:
+        my_words = []
+        for word in my_dashboard.wordlist["words"]:
+            info = {"word": word["word"], "power": word["power"]}
+            my_words.append(info)
+        for word in my_words:
+            formula(session["user_id"], word["word"])
+        count = len(my_words)
+        return render_template("dashboard.html", my_words=my_words, count=count)
+    return render_template("dashboard.html",count=count)
 
 @dashboard.route("/quiz/", methods=["GET", "POST"])
 def start_quiz():

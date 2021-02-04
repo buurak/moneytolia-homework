@@ -64,7 +64,7 @@ def save_word():
         if dashboard:
             for i in dashboard.wordlist["words"]:
                 if i["word"] == data["word"]:
-                    flash("This word is already saved!")
+                    flash("This word is already saved!", "Danger")
                     return redirect(url_for("words.search_word"))
 
             word_details = {
@@ -83,6 +83,7 @@ def save_word():
             flag_modified(dashboard, "wordlist")
             db.session.commit()
             formula(session["user_id"], word)
+            flash("Word is saved to your dashboard", "Success")
             return redirect(url_for("words.search_word"))
 
         else:
@@ -102,6 +103,7 @@ def save_word():
             db.session.add(newDashboard)
             db.session.commit()
             formula(session["user_id"], word)
+            flash("Word is saved to your dashboard", "Success")
             return redirect(url_for("words.search_word"))
 
 
