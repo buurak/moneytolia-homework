@@ -44,5 +44,5 @@ def register():
 @user.route('/logout/')
 @login_required
 def logout():
-    session['logged_in'] = False
+    session.clear()
     return redirect(url_for('user.login'))

@@ -4,7 +4,7 @@ from flask import session, flash, redirect, url_for
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if session['logged_in']:
+        if 'logged_in' in session:
             return f(*args, **kwargs)
         else:
             flash('Please login to see this page!', 'danger')
