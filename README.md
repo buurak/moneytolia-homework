@@ -1,6 +1,6 @@
 # moneytolia-homework
 
-**Proje Kurulumu**
+**Project Installation**
 
 ```
 python3 -m venv env
@@ -9,7 +9,7 @@ pip3 install -r requirements.txt
 python3 run.py
 ```
 
-**dotenv .env içeriği**
+**dotenv .env content**
 
 cd /moneytolia-homework/app
 
